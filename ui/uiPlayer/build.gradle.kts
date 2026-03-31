@@ -4,28 +4,22 @@ plugins {
 }
 
 kotlin {
-    android.namespace = "template.di.app"
+    android.namespace = "template.ui.player"
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
             implementation(projects.core.coreCommon)
             implementation(projects.core.corePref)
-            implementation(projects.navigation)
             implementation(projects.ui.uiCommon)
-            implementation(projects.ui.uiEditor)
-            implementation(projects.ui.uiMain)
-            implementation(projects.ui.uiPlayer)
-            implementation(projects.ui.uiSplash)
-        }
-
-        jvmTest.dependencies {
-            implementation(libs.roborazzi.compose.desktop)
         }
 
         androidHostTest.dependencies {
             implementation(libs.robolectric)
             implementation(libs.roborazzi)
             implementation(libs.roborazzi.compose)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.roborazzi.compose.desktop)
         }
 
         iosTest.dependencies {

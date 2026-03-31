@@ -6,13 +6,7 @@ import org.koin.core.annotation.Single
 import template.ui.main.MainNavigationCallback
 import template.ui.splash.SplashNavigationCallback
 
-@Single(
-    binds = [
-        AppNavigation::class,
-        SplashNavigationCallback::class,
-        SplashNavigationCallback::class,
-    ],
-)
+@Single
 internal class AppNavigation :
     MainNavigationCallback,
     SplashNavigationCallback {

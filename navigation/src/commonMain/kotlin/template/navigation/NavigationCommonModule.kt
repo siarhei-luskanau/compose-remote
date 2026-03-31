@@ -7,7 +7,9 @@ import org.koin.core.annotation.Module
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
+import template.ui.editor.EditorScreen
 import template.ui.main.MainScreen
+import template.ui.player.PlayerScreen
 import template.ui.splash.SplashScreen
 
 @Module
@@ -22,5 +24,11 @@ val navigationModule =
         }
         navigation<AppRoutes.Main> { route ->
             MainScreen(viewModel = koinViewModel { parametersOf(route.initArg) })
+        }
+        navigation<AppRoutes.Player> {
+            PlayerScreen(viewModel = koinViewModel())
+        }
+        navigation<AppRoutes.Editor> {
+            EditorScreen(viewModel = koinViewModel())
         }
     }

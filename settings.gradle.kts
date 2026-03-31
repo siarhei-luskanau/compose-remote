@@ -10,7 +10,9 @@ include(
     ":diApp",
     ":navigation",
     ":ui:uiCommon",
+    ":ui:uiEditor",
     ":ui:uiMain",
+    ":ui:uiPlayer",
     ":ui:uiSplash",
 )
 

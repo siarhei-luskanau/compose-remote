@@ -12,7 +12,9 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(projects.ui.uiCommon)
+            implementation(projects.ui.uiEditor)
             implementation(projects.ui.uiMain)
+            implementation(projects.ui.uiPlayer)
             implementation(projects.ui.uiSplash)
         }
     }
