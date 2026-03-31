@@ -8,4 +8,8 @@ interface PrefService {
     fun getKey(): Flow<String?>
 
     suspend fun setKey(key: String?)
+
+    fun getDocumentBytes(): Flow<ByteArray?>
+
+    suspend fun setDocumentBytes(bytes: ByteArray)
 }

@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Provided
 import org.koin.core.annotation.Single
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Single
 internal class PrefServiceDataStore(
@@ -28,6 +30,17 @@ internal class PrefServiceDataStore(
 
     override suspend fun setKey(key: String?) {
         updateDataStore { it.copy(key = key) }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun getDocumentBytes(): Flow<ByteArray?> =
+        getFlowFromDataStore { prefData ->
+            prefData.documentBytes?.let { Base64.decode(it) }
+        }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override suspend fun setDocumentBytes(bytes: ByteArray) {
+        updateDataStore { it.copy(documentBytes = Base64.encode(bytes)) }
     }
 
     private fun <T : Any> getFlowFromDataStore(mapData: (PrefData) -> T?): Flow<T?> = dataStore.data.map { mapData(it) }

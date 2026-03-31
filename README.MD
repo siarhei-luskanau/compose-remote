@@ -1,4 +1,4 @@
-# compose-multiplatform-template
+# compose-remote
 
 ### Android
 To run the application on android device/emulator:
