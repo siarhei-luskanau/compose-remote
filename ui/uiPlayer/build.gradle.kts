@@ -12,6 +12,12 @@ kotlin {
             implementation(projects.ui.uiCommon)
         }
 
+        androidMain.dependencies {
+            implementation(libs.androidx.remote.core)
+            implementation(libs.androidx.remote.player.compose)
+            implementation(libs.androidx.remote.player.core)
+        }
+
         androidHostTest.dependencies {
             implementation(libs.robolectric)
             implementation(libs.roborazzi)

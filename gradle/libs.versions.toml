@@ -31,8 +31,8 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-datastore-core-okio = { module = "androidx.datastore:datastore-core-okio", version.ref = "androidx-datastore" }
 androidx-remote-core = { module = "androidx.compose.remote:remote-core", version.ref = "androidx-remote" }
 androidx-remote-creation = { module = "androidx.compose.remote:remote-creation", version.ref = "androidx-remote" }
+androidx-remote-player-compose = { group = "androidx.compose.remote", name = "remote-player-compose", version.ref = "androidx-remote" }
 androidx-remote-player-core = { module = "androidx.compose.remote:remote-player-core", version.ref = "androidx-remote" }
-androidx-remote-player-view = { module = "androidx.compose.remote:remote-player-view", version.ref = "androidx-remote" }
 androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
 androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
 jetbrains-compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose-multiplatform" }

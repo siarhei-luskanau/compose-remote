@@ -10,13 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.compose.koinInject
 import template.ui.common.theme.AppTheme
 
 @Composable
-fun PlayerScreen(viewModel: PlayerViewModel) {
+fun PlayerScreen(
+    viewModel: PlayerViewModel,
+    renderer: RemoteDocumentRenderer = koinInject(),
+) {
     PlayerContent(
         viewStateFlow = viewModel.viewState,
         onEvent = viewModel::onEvent,
+        renderDocument = renderer::Render,
     )
 }
 
@@ -24,13 +29,14 @@ fun PlayerScreen(viewModel: PlayerViewModel) {
 internal fun PlayerContent(
     viewStateFlow: StateFlow<PlayerViewState>,
     onEvent: (PlayerViewEvent) -> Unit,
+    renderDocument: @Composable (bytes: ByteArray, modifier: Modifier) -> Unit,
 ) {
     val viewState = viewStateFlow.collectAsState()
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        when (viewState.value) {
+        when (val state = viewState.value) {
             PlayerViewState.Loading -> Text("Loading…")
             PlayerViewState.NoDocument -> Text("No document saved yet")
-            is PlayerViewState.HasDocument -> Text("Document loaded")
+            is PlayerViewState.HasDocument -> renderDocument(state.bytes, Modifier.fillMaxSize())
         }
     }
 }
@@ -42,6 +48,7 @@ internal fun PlayerScreenLoadingPreview() =
         PlayerContent(
             viewStateFlow = MutableStateFlow(PlayerViewState.Loading),
             onEvent = {},
+            renderDocument = { _, _ -> },
         )
     }
 
@@ -52,6 +59,7 @@ internal fun PlayerScreenNoDocumentPreview() =
         PlayerContent(
             viewStateFlow = MutableStateFlow(PlayerViewState.NoDocument),
             onEvent = {},
+            renderDocument = { _, _ -> },
         )
     }
 
@@ -62,5 +70,6 @@ internal fun PlayerScreenHasDocumentPreview() =
         PlayerContent(
             viewStateFlow = MutableStateFlow(PlayerViewState.HasDocument(byteArrayOf(1, 2, 3))),
             onEvent = {},
+            renderDocument = { _, _ -> Text("Document loaded") },
         )
     }
