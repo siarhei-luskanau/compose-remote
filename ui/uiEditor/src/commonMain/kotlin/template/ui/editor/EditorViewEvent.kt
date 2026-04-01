@@ -26,4 +26,6 @@ sealed interface EditorViewEvent {
     data class SelectElement(
         val index: Int?,
     ) : EditorViewEvent
+
+    data object BuildAndSave : EditorViewEvent
 }

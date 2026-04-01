@@ -12,6 +12,16 @@ kotlin {
             implementation(projects.ui.uiCommon)
         }
 
+        androidMain.dependencies {
+            implementation(libs.androidx.remote.creation)
+            implementation(libs.androidx.remote.core)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.androidx.remote.creation)
+            implementation(libs.androidx.remote.core)
+        }
+
         androidHostTest.dependencies {
             implementation(libs.robolectric)
             implementation(libs.roborazzi)

@@ -83,9 +83,8 @@ internal fun EditorContent(
         bottomBar = {
             Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Button(
-                    onClick = {},
+                    onClick = { onEvent(EditorViewEvent.BuildAndSave) },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = false,
                 ) {
                     Text("Build & Save")
                 }

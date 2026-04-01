@@ -1,12 +1,19 @@
 package template.ui.editor
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
+import org.koin.core.annotation.Provided
+import template.core.pref.PrefService
 
 @KoinViewModel
-class EditorViewModel : ViewModel() {
+class EditorViewModel(
+    @Provided private val documentBuilder: DocumentBuilder,
+    @Provided private val prefService: PrefService,
+) : ViewModel() {
     val viewState: StateFlow<EditorViewState>
         field = MutableStateFlow(EditorViewState())
 
@@ -18,6 +25,14 @@ class EditorViewModel : ViewModel() {
             is EditorViewEvent.UpdateElement -> updateElement(event.index, event.updated)
             is EditorViewEvent.UpdateLayout -> viewState.value = viewState.value.copy(config = event.config)
             is EditorViewEvent.SelectElement -> viewState.value = viewState.value.copy(selectedIndex = event.index)
+            is EditorViewEvent.BuildAndSave -> buildAndSave()
+        }
+    }
+
+    private fun buildAndSave() {
+        viewModelScope.launch {
+            val bytes = documentBuilder.build(viewState.value.config)
+            prefService.setDocumentBytes(bytes)
         }
     }
 
