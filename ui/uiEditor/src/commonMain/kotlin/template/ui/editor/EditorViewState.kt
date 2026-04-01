@@ -1,5 +1,6 @@
 package template.ui.editor
 
-sealed interface EditorViewState {
-    data object Loading : EditorViewState
-}
+data class EditorViewState(
+    val config: LayoutConfig = LayoutConfig(),
+    val selectedIndex: Int? = null,
+)

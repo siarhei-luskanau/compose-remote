@@ -10,10 +10,18 @@ import kotlin.test.Test
 @OptIn(ExperimentalTestApi::class, ExperimentalRoborazziApi::class)
 internal class EditorScreenIosTest {
     @Test
-    fun preview() =
+    fun empty() =
         runComposeUiTest {
-            setContent { EditorScreenPreview() }
+            setContent { EditorScreenEmptyPreview() }
             waitForIdle()
-            onRoot().captureRoboImage(this, filePath = "template.ui.editor.EditorScreenIosTest.preview.png")
+            onRoot().captureRoboImage(this, filePath = "template.ui.editor.EditorScreenIosTest.empty.png")
+        }
+
+    @Test
+    fun withElements() =
+        runComposeUiTest {
+            setContent { EditorScreenWithElementsPreview() }
+            waitForIdle()
+            onRoot().captureRoboImage(this, filePath = "template.ui.editor.EditorScreenIosTest.withElements.png")
         }
 }

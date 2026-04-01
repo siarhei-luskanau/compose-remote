@@ -17,9 +17,17 @@ import kotlin.test.Test
 @OptIn(ExperimentalTestApi::class)
 internal class EditorScreenAndroidTest {
     @Test
-    fun preview() =
+    fun empty() =
         runComposeUiTest {
-            setContent { EditorScreenPreview() }
+            setContent { EditorScreenEmptyPreview() }
+            waitForIdle()
+            onRoot().captureRoboImage()
+        }
+
+    @Test
+    fun withElements() =
+        runComposeUiTest {
+            setContent { EditorScreenWithElementsPreview() }
             waitForIdle()
             onRoot().captureRoboImage()
         }

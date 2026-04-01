@@ -11,11 +11,20 @@ import kotlin.test.Test
 @OptIn(ExperimentalTestApi::class)
 internal class EditorScreenCommonTest {
     @Test
-    fun simpleCheck() =
+    fun empty() =
         runComposeUiTest {
-            setContent { EditorScreenPreview() }
+            setContent { EditorScreenEmptyPreview() }
             waitForIdle()
             onRoot().printToLog("StartTag")
-            onNodeWithText("Loading…").assertIsDisplayed()
+            onNodeWithText("Editor").assertIsDisplayed()
+        }
+
+    @Test
+    fun withElements() =
+        runComposeUiTest {
+            setContent { EditorScreenWithElementsPreview() }
+            waitForIdle()
+            onRoot().printToLog("StartTag")
+            onNodeWithText("Elements (3)").assertIsDisplayed()
         }
 }
