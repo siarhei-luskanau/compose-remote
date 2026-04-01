@@ -12,10 +12,11 @@ internal class RemoteDocumentRendererWeb : RemoteDocumentRenderer {
     @Composable
     override fun Render(
         bytes: ByteArray,
+        hashCode: Int,
         modifier: Modifier,
     ) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Text("Remote Compose Player is not supported on this platform")
+            Text("Remote Compose Player is not supported on this platform\nsize=${bytes.size}")
         }
     }
 }

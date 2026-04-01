@@ -367,7 +367,58 @@ Module-level dependency wiring:
 - `DocumentBuilderStub` (`iosMain` + `webMain`) - returns empty bytes
 - Wire "Build & Save" in `EditorViewModel.buildAndSave()`
 
-### Phase 7 - Navigation integration & polish
-- Update `MainScreen` or `AppNavigation` to expose Player / Editor tab navigation
-- Error handling: invalid hex color guard, build failure snackbar
-- Platform-specific stub banners where applicable
+### Phase 7 - Navigation integration & adaptive layout
+
+Inspired by the **Cahier** sample ([source](https://github.com/android/cahier), [blog](https://android-developers.googleblog.com/2025/10/introducing-cahier-new-android-github.html)).
+Cahier is Android-only; this project is KMP/CMP, so it uses the JetBrains CMP equivalents from `org.jetbrains.compose.material3`.
+
+Two Material 3 Adaptive components replace all manual breakpoint logic:
+
+- **`NavigationSuiteScaffold`** — outer nav chrome that auto-adapts:
+  - Compact (phone): bottom navigation bar with Player / Editor tabs
+  - Medium/Expanded (tablet, desktop): navigation rail on the left
+- **`ListDetailPaneScaffold`** — two-pane content layout:
+  - Compact: shows only one pane at a time; tab selection drives which pane is visible
+  - Expanded: shows both panes simultaneously side by side (Player left, Editor right)
+  - Provides a draggable `VerticalDragHandle` splitter on expanded screens
+
+```
+Phone (compact)                     Tablet / Desktop (expanded)
+┌──────────────────────────┐        ┌────┬─────────────┬──────────────────┐
+│                          │        │    │             │                  │
+│  [active screen content] │        │nav │   Player    │    Editor        │
+│                          │        │rail│  (list pane)│  (detail pane)   │
+├──────────────────────────┤        │    │             │                  │
+│  [Player]    [Editor]    │        └────┴─────────────┴──────────────────┘
+└──────────────────────────┘
+```
+
+Navigator is created with `rememberListDetailPaneScaffoldNavigator<Nothing>()`.
+On compact, tapping the "Editor" tab calls `navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)`.
+`BackHandler(navigator.canNavigateBack()) { navigator.navigateBack() }` handles the back gesture.
+
+#### New dependencies
+
+> Verify exact CMP module coordinates against the CMP 1.11 artifact list before implementing.
+> AndroidX originals: `androidx.compose.material3.adaptive:adaptive-navigation` and `androidx.compose.material3:material3-adaptive-navigation-suite`.
+> JetBrains CMP mirrors them under `org.jetbrains.compose.material3`.
+
+```toml
+# libs.versions.toml — new entries
+[versions]
+material3-adaptive = "1.1.0"   # verify against CMP 1.11 compatibility matrix
+
+[libraries]
+jetbrains-compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "material3-adaptive" }
+jetbrains-compose-material3-adaptive-navigation-suite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3-adaptive" }
+```
+
+#### Files changed
+
+| File | Change |
+|------|--------|
+| `gradle/libs.versions.toml` | Add `material3-adaptive` version + 2 library aliases (above) |
+| `navigation/build.gradle.kts` | Add both new libs to `commonMain` dependencies |
+| `navigation/src/commonMain/…/NavApp.kt` | Replace root with `NavigationSuiteScaffold` (nav items: Player, Editor) wrapping `ListDetailPaneScaffold` (list = `PlayerScreen`, detail = `EditorScreen`); `rememberListDetailPaneScaffoldNavigator<Nothing>()`; `BackHandler`; `VerticalDragHandle` |
+| `ui/uiMain/…/MainScreen.kt` | Kept as-is — `MainScreen` is no longer in the navigation flow; `AppRoutes.Main` can be removed or kept as a redirect |
+| `navigation/src/commonMain/…/AppNavigation.kt` | Remove `Main` as start destination; scaffold replaces screen-level routing for Player/Editor |

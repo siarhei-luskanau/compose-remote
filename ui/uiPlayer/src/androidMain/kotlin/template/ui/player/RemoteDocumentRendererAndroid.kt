@@ -16,9 +16,10 @@ internal class RemoteDocumentRendererAndroid : RemoteDocumentRenderer {
     @Composable
     override fun Render(
         bytes: ByteArray,
+        hashCode: Int,
         modifier: Modifier,
     ) {
-        val document = remember(bytes.contentHashCode()) { RemoteDocument(bytes) }
+        val document = remember(hashCode) { RemoteDocument(bytes) }
         RemoteDocumentPlayer(
             document = document.document,
             documentWidth = document.width,

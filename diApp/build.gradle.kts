@@ -13,7 +13,6 @@ kotlin {
             implementation(projects.navigation)
             implementation(projects.ui.uiCommon)
             implementation(projects.ui.uiEditor)
-            implementation(projects.ui.uiMain)
             implementation(projects.ui.uiPlayer)
             implementation(projects.ui.uiSplash)
         }

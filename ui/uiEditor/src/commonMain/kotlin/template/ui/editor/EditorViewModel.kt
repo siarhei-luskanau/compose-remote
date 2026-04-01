@@ -25,8 +25,8 @@ class EditorViewModel(
             is EditorViewEvent.UpdateElement -> updateElement(event.index, event.updated)
             is EditorViewEvent.UpdateLayout -> viewState.value = viewState.value.copy(config = event.config)
             is EditorViewEvent.SelectElement -> viewState.value = viewState.value.copy(selectedIndex = event.index)
-            is EditorViewEvent.BuildAndSave -> buildAndSave()
         }
+        buildAndSave()
     }
 
     private fun buildAndSave() {

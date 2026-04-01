@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,16 +79,6 @@ internal fun EditorContent(
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Editor") }) },
-        bottomBar = {
-            Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                Button(
-                    onClick = { onEvent(EditorViewEvent.BuildAndSave) },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text("Build & Save")
-                }
-            }
-        },
     ) { contentPadding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(contentPadding),

@@ -5,7 +5,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import template.ui.common.theme.AppTheme
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel) {
@@ -22,9 +25,45 @@ internal fun SplashContent(
 ) {
     val viewState = viewStateFlow.collectAsState()
     Scaffold {
-        Text("Splash: $viewState")
+        val text =
+            when (val viewStateValue = viewState.value) {
+                is SplashViewState.Error -> viewStateValue.error.message
+                SplashViewState.Loading -> "Loading"
+                is SplashViewState.Success -> viewStateValue.data
+            }
+        Text("Splash: $text")
     }
     LaunchedEffect(Unit) {
         onEvent(SplashViewEvent.Launched)
     }
 }
+
+@Preview
+@Composable
+internal fun SplashScreenLoadingPreview() =
+    AppTheme {
+        SplashContent(
+            viewStateFlow = MutableStateFlow(SplashViewState.Loading),
+            onEvent = {},
+        )
+    }
+
+@Preview
+@Composable
+internal fun SplashScreenSuccessPreview() =
+    AppTheme {
+        SplashContent(
+            viewStateFlow = MutableStateFlow(SplashViewState.Success(data = "Preview data")),
+            onEvent = {},
+        )
+    }
+
+@Preview
+@Composable
+internal fun SplashScreenErrorPreview() =
+    AppTheme {
+        SplashContent(
+            viewStateFlow = MutableStateFlow(SplashViewState.Error(error = RuntimeException("Something went wrong"))),
+            onEvent = {},
+        )
+    }

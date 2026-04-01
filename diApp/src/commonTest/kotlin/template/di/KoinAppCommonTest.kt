@@ -16,6 +16,6 @@ internal class KoinAppCommonTest {
             setContent { KoinApp() }
             waitForIdle()
             onRoot().printToLog("StartTag")
-            onNodeWithText("Main").assertIsDisplayed()
+            onNodeWithText("No document saved yet").assertIsDisplayed()
         }
 }

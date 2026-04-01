@@ -7,6 +7,7 @@ interface RemoteDocumentRenderer {
     @Composable
     fun Render(
         bytes: ByteArray,
+        hashCode: Int,
         modifier: Modifier,
     )
 }

@@ -29,14 +29,14 @@ fun PlayerScreen(
 internal fun PlayerContent(
     viewStateFlow: StateFlow<PlayerViewState>,
     onEvent: (PlayerViewEvent) -> Unit,
-    renderDocument: @Composable (bytes: ByteArray, modifier: Modifier) -> Unit,
+    renderDocument: @Composable (bytes: ByteArray, hashCode: Int, modifier: Modifier) -> Unit,
 ) {
-    val viewState = viewStateFlow.collectAsState()
+    val viewState = viewStateFlow.collectAsState(PlayerViewState.Loading)
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (val state = viewState.value) {
             PlayerViewState.Loading -> Text("Loading…")
             PlayerViewState.NoDocument -> Text("No document saved yet")
-            is PlayerViewState.HasDocument -> renderDocument(state.bytes, Modifier.fillMaxSize())
+            is PlayerViewState.HasDocument -> renderDocument(state.bytes, state.bytes.contentHashCode(), Modifier.fillMaxSize())
         }
     }
 }
@@ -48,7 +48,7 @@ internal fun PlayerScreenLoadingPreview() =
         PlayerContent(
             viewStateFlow = MutableStateFlow(PlayerViewState.Loading),
             onEvent = {},
-            renderDocument = { _, _ -> },
+            renderDocument = { _, _, _ -> },
         )
     }
 
@@ -59,7 +59,7 @@ internal fun PlayerScreenNoDocumentPreview() =
         PlayerContent(
             viewStateFlow = MutableStateFlow(PlayerViewState.NoDocument),
             onEvent = {},
-            renderDocument = { _, _ -> },
+            renderDocument = { _, _, _ -> },
         )
     }
 
@@ -70,6 +70,6 @@ internal fun PlayerScreenHasDocumentPreview() =
         PlayerContent(
             viewStateFlow = MutableStateFlow(PlayerViewState.HasDocument(byteArrayOf(1, 2, 3))),
             onEvent = {},
-            renderDocument = { _, _ -> Text("Document loaded") },
+            renderDocument = { _, _, _ -> Text("Document loaded") },
         )
     }
