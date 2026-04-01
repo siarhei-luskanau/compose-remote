@@ -21,7 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -106,6 +110,17 @@ internal fun EditorContent(
                     selectedIndex = state.selectedIndex,
                     onEvent = onEvent,
                 )
+            }
+            if (state.selectedIndex != null) {
+                val element = state.config.elements.getOrNull(state.selectedIndex)
+                if (element != null) {
+                    item("property") {
+                        PropertyPanel(
+                            element = element,
+                            onUpdate = { onEvent(EditorViewEvent.UpdateElement(state.selectedIndex, it)) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -357,6 +372,245 @@ private fun elementLabel(element: ElementConfig): String {
     return "${element.type}$detail"
 }
 
+@Composable
+private fun PropertyPanel(
+    element: ElementConfig,
+    onUpdate: (ElementConfig) -> Unit,
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Text("Properties: ${element.type}", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
+        when (element.type) {
+            "text" -> {
+                TextFieldProp("text", element.text ?: "") { onUpdate(element.copy(text = it.ifEmpty { null })) }
+                ColorFieldProp("color", element.color) { onUpdate(element.copy(color = it)) }
+                NumberFieldProp("fontSize", element.fontSize) { onUpdate(element.copy(fontSize = it)) }
+                AlignDropdown(element.align) { onUpdate(element.copy(align = it)) }
+                NumberFieldProp("paddingH", element.paddingH) { onUpdate(element.copy(paddingH = it)) }
+                NumberFieldProp("paddingV", element.paddingV) { onUpdate(element.copy(paddingV = it)) }
+                TextFieldProp("id", element.id) { onUpdate(element.copy(id = it)) }
+            }
+
+            "button" -> {
+                TextFieldProp("text", element.text ?: "") { onUpdate(element.copy(text = it.ifEmpty { null })) }
+                ColorFieldProp("color", element.color) { onUpdate(element.copy(color = it)) }
+                ColorFieldProp("textColor", element.textColor) { onUpdate(element.copy(textColor = it)) }
+                NumberFieldProp("cornerRadius", element.cornerRadius) { onUpdate(element.copy(cornerRadius = it)) }
+                NumberFieldProp("paddingH", element.paddingH) { onUpdate(element.copy(paddingH = it)) }
+                NumberFieldProp("paddingV", element.paddingV) { onUpdate(element.copy(paddingV = it)) }
+                TextFieldProp("actionName", element.actionName ?: "") { onUpdate(element.copy(actionName = it.ifEmpty { null })) }
+                TextFieldProp("id", element.id) { onUpdate(element.copy(id = it)) }
+            }
+
+            "spacer" -> {
+                NumberFieldProp("height", element.height) { onUpdate(element.copy(height = it)) }
+            }
+
+            "hspacer" -> {
+                NumberFieldProp("width", element.width) { onUpdate(element.copy(width = it)) }
+            }
+
+            "divider" -> {
+                ColorFieldProp("color", element.color) { onUpdate(element.copy(color = it)) }
+                NumberFieldProp("height", element.height) { onUpdate(element.copy(height = it)) }
+            }
+
+            "card" -> {
+                ColorFieldProp("color", element.color) { onUpdate(element.copy(color = it)) }
+                NumberFieldProp("cornerRadius", element.cornerRadius) { onUpdate(element.copy(cornerRadius = it)) }
+                ColorFieldProp("borderColor", element.borderColor) { onUpdate(element.copy(borderColor = it)) }
+                NumberFieldProp("borderWidth", element.borderWidth) { onUpdate(element.copy(borderWidth = it)) }
+                NumberFieldProp("paddingH", element.paddingH) { onUpdate(element.copy(paddingH = it)) }
+                NumberFieldProp("paddingV", element.paddingV) { onUpdate(element.copy(paddingV = it)) }
+                ChildrenEditor(element.children ?: emptyList()) { onUpdate(element.copy(children = it)) }
+            }
+
+            "row" -> {
+                NumberFieldProp("paddingH", element.paddingH) { onUpdate(element.copy(paddingH = it)) }
+                NumberFieldProp("paddingV", element.paddingV) { onUpdate(element.copy(paddingV = it)) }
+                ChildrenEditor(element.children ?: emptyList()) { onUpdate(element.copy(children = it)) }
+            }
+        }
+        HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
+    }
+}
+
+@Composable
+private fun TextFieldProp(
+    label: String,
+    value: String,
+    onUpdate: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onUpdate,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        singleLine = true,
+    )
+}
+
+@Composable
+private fun NumberFieldProp(
+    label: String,
+    value: Int?,
+    onUpdate: (Int?) -> Unit,
+) {
+    OutlinedTextField(
+        value = value?.toString() ?: "",
+        onValueChange = { onUpdate(it.toIntOrNull()) },
+        label = { Text(label) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        singleLine = true,
+    )
+}
+
+@Composable
+private fun ColorFieldProp(
+    label: String,
+    value: String?,
+    onUpdate: (String?) -> Unit,
+) {
+    OutlinedTextField(
+        value = value ?: "",
+        onValueChange = { onUpdate(it.ifEmpty { null }) },
+        label = { Text(label) },
+        trailingIcon = {
+            val parsed = value?.let { parseColor(it) }
+            if (parsed != null) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .background(parsed, RoundedCornerShape(4.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp)),
+                )
+            }
+        },
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        singleLine = true,
+    )
+}
+
+private val ALIGN_OPTIONS = listOf("start", "center", "end")
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AlignDropdown(
+    value: String?,
+    onUpdate: (String?) -> Unit,
+) {
+    val (expanded, setExpanded) = remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = setExpanded,
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+    ) {
+        OutlinedTextField(
+            value = value ?: "",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("align") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) },
+        ) {
+            DropdownMenuItem(
+                text = { Text("(none)") },
+                onClick = {
+                    onUpdate(null)
+                    setExpanded(false)
+                },
+            )
+            ALIGN_OPTIONS.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onUpdate(option)
+                        setExpanded(false)
+                    },
+                )
+            }
+        }
+    }
+}
+
+private val CHILD_ELEMENT_TYPES = listOf("text", "button", "spacer", "hspacer", "divider")
+
+@Composable
+private fun ChildrenEditor(
+    children: List<ElementConfig>,
+    onUpdate: (List<ElementConfig>) -> Unit,
+) {
+    Column(modifier = Modifier.padding(top = 4.dp)) {
+        Text("Children (${children.size})", style = MaterialTheme.typography.titleSmall)
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            CHILD_ELEMENT_TYPES.forEach { type ->
+                SuggestionChip(
+                    onClick = { onUpdate(children + defaultChildElement(type)) },
+                    label = { Text(type) },
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        children.forEachIndexed { index, child ->
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = elementLabel(child),
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                IconButton(
+                    onClick = {
+                        val list = children.toMutableList()
+                        val item = list.removeAt(index)
+                        list.add(index - 1, item)
+                        onUpdate(list)
+                    },
+                    enabled = index > 0,
+                ) { Text("↑") }
+                IconButton(
+                    onClick = {
+                        val list = children.toMutableList()
+                        val item = list.removeAt(index)
+                        list.add(index + 1, item)
+                        onUpdate(list)
+                    },
+                    enabled = index < children.lastIndex,
+                ) { Text("↓") }
+                IconButton(onClick = { onUpdate(children.toMutableList().also { it.removeAt(index) }) }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.ic_close),
+                        contentDescription = "Remove child",
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun defaultChildElement(type: String): ElementConfig =
+    when (type) {
+        "text" -> ElementConfig(type = "text", text = "Text", color = "#000000", fontSize = 16)
+        "button" -> ElementConfig(type = "button", text = "Button", color = "#6200EA", textColor = "#FFFFFF", cornerRadius = 24)
+        "spacer" -> ElementConfig(type = "spacer", height = 16)
+        "hspacer" -> ElementConfig(type = "hspacer", width = 16)
+        "divider" -> ElementConfig(type = "divider", color = "#CCCCCC", height = 1)
+        else -> ElementConfig(type = type)
+    }
+
 private fun parseColor(hex: String): Color? {
     val clean = hex.trimStart('#')
     return when (clean.length) {
@@ -391,6 +645,65 @@ internal fun EditorScreenWithElementsPreview() =
                                         ElementConfig(type = "text", text = "Hello"),
                                         ElementConfig(type = "button", text = "Click me"),
                                         ElementConfig(type = "divider"),
+                                    ),
+                            ),
+                        selectedIndex = 0,
+                    ),
+                ),
+            onEvent = {},
+        )
+    }
+
+@Preview
+@Composable
+internal fun EditorScreenPropertyPanelPreview() =
+    AppTheme {
+        EditorContent(
+            viewStateFlow =
+                MutableStateFlow(
+                    EditorViewState(
+                        config =
+                            LayoutConfig(
+                                elements =
+                                    listOf(
+                                        ElementConfig(
+                                            type = "button",
+                                            text = "Submit",
+                                            color = "#6200EA",
+                                            textColor = "#FFFFFF",
+                                            cornerRadius = 24,
+                                        ),
+                                    ),
+                            ),
+                        selectedIndex = 0,
+                    ),
+                ),
+            onEvent = {},
+        )
+    }
+
+@Preview
+@Composable
+internal fun EditorScreenCardChildrenPreview() =
+    AppTheme {
+        EditorContent(
+            viewStateFlow =
+                MutableStateFlow(
+                    EditorViewState(
+                        config =
+                            LayoutConfig(
+                                elements =
+                                    listOf(
+                                        ElementConfig(
+                                            type = "card",
+                                            color = "#FFFFFF",
+                                            cornerRadius = 16,
+                                            children =
+                                                listOf(
+                                                    ElementConfig(type = "text", text = "Card title"),
+                                                    ElementConfig(type = "divider"),
+                                                ),
+                                        ),
                                     ),
                             ),
                         selectedIndex = 0,
