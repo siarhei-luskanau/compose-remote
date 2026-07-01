@@ -2,14 +2,15 @@
 agp = "9.2.1"
 androidx-activity = "1.13.0"
 androidx-datastore = "1.3.0-alpha09"
-androidx-uiTest = "1.11.2"
-androidx-remote = "1.0.0-alpha12"
+androidx-uiTest = "1.11.3"
+androidx-remote = "1.0.0-alpha13"
 build-android-compileSdk = "37"
 build-android-minSdk = "30"
 build-android-targetSdk = "37"
-compose-multiplatform = "1.12.0-alpha02"
+compose-multiplatform = "1.12.0-beta01"
 detekt = "1.23.8"
 javaVersion = "11"
+jetbrains-compose-material3 = "1.12.0-alpha03"
 jetbrains-compose-material3-adaptive = "1.3.0-beta02"
 jetbrains-lifecycle = "2.11.0-rc01"
 jetbrains-navigation3 = "1.1.1"
@@ -40,8 +41,8 @@ jetbrains-compose-animation-graphics = { module = "org.jetbrains.compose.animati
 jetbrains-compose-compiler-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 jetbrains-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
-jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-multiplatform" }
-jetbrains-compose-material3-adaptive-navigation-suite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "compose-multiplatform" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "jetbrains-compose-material3" }
+jetbrains-compose-material3-adaptive-navigation-suite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "jetbrains-compose-material3" }
 jetbrains-compose-material3-adaptive-navigation3 = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "jetbrains-compose-material3-adaptive" }
 jetbrains-compose-plugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
 jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
