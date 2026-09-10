@@ -14,6 +14,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.remote.core)
+            implementation(libs.androidx.remote.foundation)
             implementation(libs.androidx.remote.player.compose)
             implementation(libs.androidx.remote.player.core)
         }
