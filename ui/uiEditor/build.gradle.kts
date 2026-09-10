@@ -15,6 +15,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.remote.creation)
             implementation(libs.androidx.remote.core)
+            implementation(libs.androidx.remote.foundation)
         }
 
         jvmMain.dependencies {
