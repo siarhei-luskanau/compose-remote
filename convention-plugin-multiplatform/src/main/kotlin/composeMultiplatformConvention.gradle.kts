@@ -15,10 +15,19 @@ plugins {
 kotlin {
     android {
         compilerOptions { jvmTarget = JvmTarget.fromTarget(libs.versions.javaVersion.get()) }
-        compileSdk =
-            libs.versions.build.android.compileSdk
-                .get()
-                .toInt()
+        compileSdk {
+            version =
+                release(
+                    libs.versions.build.android.compileSdk
+                        .get()
+                        .toInt(),
+                ) {
+                    minorApiLevel =
+                        libs.versions.build.android.compileSdkMinor
+                            .get()
+                            .toInt()
+                }
+        }
         minSdk =
             libs.versions.build.android.minSdk
                 .get()
@@ -45,12 +54,26 @@ kotlin {
     }
 
     js {
-        browser()
+        browser {
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    useConfigDirectory(rootProject.file("karma.config.d"))
+                }
+            }
+        }
         binaries.executable()
     }
 
     wasmJs {
-        browser()
+        browser {
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    useConfigDirectory(rootProject.file("karma.config.d"))
+                }
+            }
+        }
         binaries.executable()
     }
 
