@@ -54,26 +54,12 @@ kotlin {
     }
 
     js {
-        browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    useConfigDirectory(rootProject.file("karma.config.d"))
-                }
-            }
-        }
+        browser()
         binaries.executable()
     }
 
     wasmJs {
-        browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    useConfigDirectory(rootProject.file("karma.config.d"))
-                }
-            }
-        }
+        browser()
         binaries.executable()
     }
 
