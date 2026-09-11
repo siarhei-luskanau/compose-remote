@@ -49,10 +49,10 @@ jobs:
       fail-fast: false
       matrix:
         gradle-tasks: [
+          "jsBrowserTest",
           "jvmTest",
           "testAndroidHostTest",
-          # "jsBrowserTest",
-          # "wasmJsBrowserTest",
+          "wasmJsBrowserTest",
         ]
         os: [ ubuntu-latest ]
         experimental: [ false ]
