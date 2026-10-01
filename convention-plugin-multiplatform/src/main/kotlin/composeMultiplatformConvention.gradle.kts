@@ -129,6 +129,7 @@ koinCompiler {
 
 tasks.withType<Test>().matching { it.name.contains("AndroidHostTest") }.configureEach {
     exclude("**/*CommonTest*")
+    jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
 }
 
 tasks.withType<AbstractTestTask>().configureEach {
